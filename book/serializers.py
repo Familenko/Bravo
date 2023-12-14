@@ -4,12 +4,6 @@ from book.models import Book
 
 
 class BookSerializer(serializers.ModelSerializer):
-    pass
-
-
-class BookListSerializer(serializers.ModelSerializer):
-    pass
-
-
-class BookDetailSerializer(serializers.ModelSerializer):
-    pass
+    class Meta:
+        model = Book
+        fields = "__all__"
