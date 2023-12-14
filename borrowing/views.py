@@ -10,9 +10,9 @@ from borrowing.serializers import (
 
 class BorrowingListView(generics.ListCreateAPIView):
     queryset = Borrowing.objects.select_related("book", "user")
-    serializer_class = BorrowingListSerializer
+    serializer_class = BorrowingSerializer
 
 
 class BorrowingDetailView(generics.RetrieveAPIView):
     queryset = Borrowing.objects.select_related("book", "user")
-    serializer_class = BorrowingDetailSerializer
+    serializer_class = BorrowingSerializer

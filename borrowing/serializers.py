@@ -1,12 +1,15 @@
 from rest_framework import serializers
 
+from book.serializers import BookSerializer
 from borrowing.models import Borrowing
 
 
 class BorrowingSerializer(serializers.ModelSerializer):
+    book = BookSerializer(read_only=True)
+
     class Meta:
         model = Borrowing
-        fields = "__all__"
+        fields = ['id', 'book', 'borrow_date', 'return_date']
 
 
 class BorrowingListSerializer(BorrowingSerializer):
@@ -22,7 +25,8 @@ class BorrowingListSerializer(BorrowingSerializer):
         )
 
 
-class BorrowingDetailSerializer(BorrowingSerializer):
-    class Meta:
-        model = Borrowing
-        fields = "__all__"
+class BorrowingDetailSerializer(BorrowingSerializer):  # For now, no needed
+    pass
+#     class Meta:
+#         model = Borrowing
+#         fields = "__all__"
