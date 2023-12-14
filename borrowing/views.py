@@ -1,6 +1,4 @@
-from django.shortcuts import render
-
-from rest_framework import viewsets, mixins
+from rest_framework import generics
 
 from borrowing.models import Borrowing
 from borrowing.serializers import (
@@ -10,5 +8,19 @@ from borrowing.serializers import (
 )
 
 
-class BorrowingViewSet():
-    pass
+class BorrowingListView(generics.ListCreateAPIView):
+    queryset = Borrowing.objects.select_related("book", "user")
+    serializer_class = BorrowingSerializer
+
+
+class BorrowingDetailView(generics.RetrieveAPIView):
+    queryset = Borrowing.objects.select_related("book", "user")
+    serializer_class = BorrowingSerializer
+
+
+class UserBorrowingsListView(generics.ListAPIView):
+    serializer_class = BorrowingSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        return Borrowing.objects.filter(user=user)
