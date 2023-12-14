@@ -138,6 +138,6 @@ SIMPLE_JWT = {
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "path.to.custom_jwt.AuthorizeHeaderJWTAuthentication",
+        "user.custom_jwt.AuthorizeHeaderJWTAuthentication",
     ),
 }
