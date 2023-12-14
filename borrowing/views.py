@@ -32,6 +32,8 @@ class BorrowingReturnView(generics.UpdateAPIView):
 
         borrowing.actual_return_date = timezone.now()
 
+        borrowing.book_id.inventory += 1
+        borrowing.book_id.save()
 
         return Response(
             BorrowingSerializer(borrowing).data,
