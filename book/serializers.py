@@ -4,12 +4,18 @@ from book.models import Book
 
 
 class BookSerializer(serializers.ModelSerializer):
-    pass
+    class Meta:
+        model = Book
+        fields = "__all__"
 
 
 class BookListSerializer(serializers.ModelSerializer):
-    pass
+    class Meta:
+        model = Book
+        field = ("id", "title", "author")
 
 
 class BookDetailSerializer(serializers.ModelSerializer):
-    pass
+    class Meta:
+        model = Book
+        fields = "__all__"
