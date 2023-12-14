@@ -4,12 +4,25 @@ from borrowing.models import Borrowing
 
 
 class BorrowingSerializer(serializers.ModelSerializer):
-    pass
+    class Meta:
+        model = Borrowing
+        fields = "__all__"
 
 
 class BorrowingListSerializer(serializers.ModelSerializer):
-    pass
+    class Meta:
+        model = Borrowing
+        fields = (
+            "id",
+            "borrow_date",
+            "expected_return_date",
+            "actual_return_date",
+            "book",
+            "user",
+        )
 
 
 class BorrowingDetailSerializer(serializers.ModelSerializer):
-    pass
+    class Meta:
+        model = Borrowing
+        fields = "__all__"
