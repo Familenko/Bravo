@@ -9,7 +9,7 @@ class BorrowingSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class BorrowingListSerializer(serializers.ModelSerializer):
+class BorrowingListSerializer(BorrowingSerializer):
     class Meta:
         model = Borrowing
         fields = (
@@ -22,7 +22,7 @@ class BorrowingListSerializer(serializers.ModelSerializer):
         )
 
 
-class BorrowingDetailSerializer(serializers.ModelSerializer):
+class BorrowingDetailSerializer(BorrowingSerializer):
     class Meta:
         model = Borrowing
         fields = "__all__"
