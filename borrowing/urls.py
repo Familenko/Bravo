@@ -16,5 +16,9 @@ urlpatterns = [
 ]
 
 
+urlpatterns += [
+    path('borrowings/<int:pk>/return/', BorrowingReturnView.as_view(), name='return_book'),
+]
+
 
 app_name = "borrowing"
