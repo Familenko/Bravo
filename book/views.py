@@ -1,6 +1,4 @@
-from django.shortcuts import render
-
-from rest_framework import viewsets, mixins
+from rest_framework import generics
 
 from book.models import Book
 from book.serializers import (
@@ -10,5 +8,11 @@ from book.serializers import (
 )
 
 
-class BookViewSet():
-    pass
+class BookListView(generics.ListAPIView):
+    queryset = Book.objects.all()
+    serializer_class = BookListSerializer
+
+
+class BookDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Book.objects.all()
+    serializer_class = BookDetailSerializer
