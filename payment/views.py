@@ -1,6 +1,6 @@
 # from django.shortcuts import render
 
-from rest_framework import viewsets, mixins
+from rest_framework import viewsets, mixins, permissions
 
 from payment.models import Payment
 from payment.serializers import (
@@ -28,3 +28,14 @@ class PaymentViewSet(
         if self.action == "retrieve":
             return PaymentDetailSerializer
         return PaymentSerializer
+
+    def get_permissions(self):
+        if self.action in ["list", "retrieve"]:
+            return [permissions.IsAuthenticated()]
+        return [permissions.AllowAny()]
+
+    def get_queryset(self):
+        if self.request.user.is_staff:
+            return Payment.objects.all()
+        else:
+            return Payment.objects.filter(borrowing_id__user=self.request.user)
