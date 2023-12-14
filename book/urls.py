@@ -1,10 +1,11 @@
 from django.urls import path, include
 
-from book.views import BookViewSet
+from book.views import BookListView, BookDetailView
 
 
 urlpatterns = [
-    path("", )
+    path("books/", BookListView.as_view(), name="book-list"),
+    path("books/<int:pk>/", BookDetailView.as_view(), name="book-detail"),
 ]
 
 
