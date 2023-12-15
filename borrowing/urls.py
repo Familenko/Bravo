@@ -8,6 +8,8 @@ from borrowing.views import (
 
 from .views import BorrowingReturnView
 
+from .views import BorrowingReturnView
+
 urlpatterns = [
     path("borrowings_list/", BorrowingListView.as_view(), name="borrowing-list"),
     path(

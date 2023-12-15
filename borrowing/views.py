@@ -32,6 +32,10 @@ class UserBorrowingsListView(generics.ListAPIView):
         return Borrowing.objects.filter(user=user)
 
 
+class BorrowingViewSet():
+    pass
+
+
 class BorrowingReturnView(generics.UpdateAPIView):
     queryset = Borrowing.objects.select_related('book', 'user')
     serializer_class = BorrowingSerializer
