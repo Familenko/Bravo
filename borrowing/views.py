@@ -1,11 +1,8 @@
-from django.shortcuts import render
 from django.utils import timezone
 
-from rest_framework import generics, status
-from rest_framework import viewsets, mixins
+from rest_framework import generics, status, mixins
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework import generics
 
 from borrowing.models import Borrowing
 from borrowing.serializers import (
@@ -49,6 +46,14 @@ class BorrowingDetailView(
     )
     serializer_class = BorrowingDetailSerializer
     permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        user_id = self.request.query_params.get("user_id")
+
+        if user.is_superuser and user_id:
+            return Borrowing.objects.filter(user_id=user_id, is_active=True)
+        return Borrowing.objects.filter(user_id=user.id, is_active=True)
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)

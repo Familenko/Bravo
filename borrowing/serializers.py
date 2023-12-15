@@ -44,7 +44,7 @@ class BorrowingSerializer(serializers.ModelSerializer):
 
 
 class BorrowingDetailSerializer(serializers.ModelSerializer):
-    book = BookSerializer()
+    book = BookSerializer(many=True, read_only=True)
 
     class Meta:
         model = Borrowing
