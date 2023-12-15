@@ -10,29 +10,31 @@ class BorrowingSerializer(serializers.ModelSerializer):
             "borrow_date",
             "expected_return_date",
             "actual_return_date",
+            "book_id",
+            "user_id",
         ]
 
     def create(self, validated_data):
-        book = validated_data["book"]
-        user = self.context["request"].user
+        book_id = validated_data["book_id"]
+        user_id = self.context["request"].user
 
-        if not user.is_authenticated:
+        if not user_id.is_authenticated:
             raise serializers.ValidationError(
                 "User must be authenticated to borrow a book."
             )
 
-        if book.inventory == 0:
+        if book_id.inventory == 0:
             raise serializers.ValidationError("Book is out of stock.")
 
         borrowing = Borrowing.objects.create(
             expected_return_date=validated_data["expected_return_date"],
             actual_return_date=validated_data["actual_return_date"],
-            book_id=book,
-            user_id=user,
+            book_id=book_id,
+            user_id=user_id,
         )
 
-        book.inventory -= 1
-        book.save()
+        book_id.inventory -= 1
+        book_id.save()
 
         return borrowing
 
