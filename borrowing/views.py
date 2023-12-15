@@ -13,19 +13,19 @@ from borrowing.serializers import (
     BorrowingDetailSerializer,
 )
 
-a
+
 class BorrowingListView(
-    mixins.ListModelMixin,
-    mixins.CreateModelMixin,
-    generics.GenericAPIView
+    mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView
 ):
-    queryset = Borrowing.objects.select_related("book_id", "user_id").filter(is_active=True)
+    queryset = Borrowing.objects.select_related("book_id", "user_id").filter(
+        is_active=True
+    )
     serializer_class = BorrowingSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         user = self.request.user
-        user_id = self.request.query_params.get('user_id')
+        user_id = self.request.query_params.get("user_id")
 
         if user.is_superuser and user_id:
             return Borrowing.objects.filter(user_id=user_id, is_active=True)
@@ -42,10 +42,11 @@ class BorrowingDetailView(
     mixins.RetrieveModelMixin,
     mixins.UpdateModelMixin,
     mixins.DestroyModelMixin,
-    generics.GenericAPIView
+    generics.GenericAPIView,
 ):
-
-    queryset = Borrowing.objects.select_related("book_id", "user_id").filter(is_active=True)
+    queryset = Borrowing.objects.select_related("book_id", "user_id").filter(
+        is_active=True
+    )
     serializer_class = BorrowingDetailSerializer
     permission_classes = [IsAuthenticated]
 
@@ -63,7 +64,7 @@ class BorrowingDetailView(
 
 
 class BorrowingReturnView(generics.UpdateAPIView):
-    queryset = Borrowing.objects.select_related('book', 'user')
+    queryset = Borrowing.objects.select_related("book", "user")
     serializer_class = BorrowingSerializer
 
     def update(self, request, *args, **kwargs):
@@ -71,8 +72,8 @@ class BorrowingReturnView(generics.UpdateAPIView):
 
         if borrowing.actual_return_date is not None:
             return Response(
-                {'message': 'Book already returned.'},
-                status=status.HTTP_400_BAD_REQUEST
+                {"message": "Book already returned."},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         borrowing.actual_return_date = timezone.now()
@@ -80,7 +81,4 @@ class BorrowingReturnView(generics.UpdateAPIView):
         borrowing.book_id.inventory += 1
         borrowing.book_id.save()
 
-        return Response(
-            BorrowingSerializer(borrowing).data,
-            status=status.HTTP_200_OK
-        )
+        return Response(BorrowingSerializer(borrowing).data, status=status.HTTP_200_OK)
