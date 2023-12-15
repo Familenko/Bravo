@@ -8,7 +8,38 @@ class BorrowingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Borrowing
-        fields = ['id', 'book', 'borrow_date', 'return_date']
+        fields = [
+            "id",
+            "borrow_date",
+            "expected_return_date",
+            "actual_return_date",
+            "book",
+            "user_id",
+        ]
+
+    def create(self, validated_data):
+        book = validated_data["book"]
+        user = self.context["request"].user
+
+        if not user.is_authenticated:
+            raise serializers.ValidationError(
+                "User must be authenticated to borrow a book."
+            )
+
+        if book.inventory == 0:
+            raise serializers.ValidationError("Book is out of stock.")
+
+        borrowing = Borrowing.objects.create(
+            expected_return_date=validated_data["expected_return_date"],
+            actual_return_date=validated_data["actual_return_date"],
+            book=book,
+            user=user,
+        )
+
+        book.inventory -= 1
+        book.save()
+
+        return borrowing
 
     def create(self, validated_data):
         book = validated_data["book"]
@@ -35,7 +66,9 @@ class BorrowingSerializer(serializers.ModelSerializer):
         return borrowing
 
 
-class BorrowingListSerializer(BorrowingSerializer):
+class BorrowingDetailSerializer(serializers.ModelSerializer):
+    book = BookSerializer()
+
     class Meta:
         model = Borrowing
         fields = (
@@ -43,13 +76,7 @@ class BorrowingListSerializer(BorrowingSerializer):
             "borrow_date",
             "expected_return_date",
             "actual_return_date",
+            "book_id",
+            "user_id",
             "book",
-            "user",
         )
-
-
-class BorrowingDetailSerializer(BorrowingSerializer):  # For now, no needed
-    pass
-#     class Meta:
-#         model = Borrowing
-#         fields = "__all__"

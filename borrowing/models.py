@@ -9,8 +9,12 @@ class Borrowing(models.Model):
     borrow_date = models.DateField()
     expected_return_date = models.DateField()
     actual_return_date = models.DateField(null=True, blank=True)
-    book_id = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="borrowings")
-    user_id = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name="borrowings")
+    book_id = models.ForeignKey(
+        Book, on_delete=models.CASCADE, related_name="borrowings"
+    )
+    user_id = models.ForeignKey(
+        get_user_model(), on_delete=models.CASCADE, related_name="borrowings"
+    )
     is_active = models.BooleanField(default=True)
 
     def clean(self):
