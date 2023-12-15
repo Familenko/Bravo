@@ -8,7 +8,6 @@ class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
         fields = (
-            "id",
             "status",
             "type",
             "borrowing",
