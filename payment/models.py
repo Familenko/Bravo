@@ -5,8 +5,8 @@ from borrowing.models import Borrowing
 
 
 class Payment(models.Model):
-    STATUS_CHOICES = [('PENDING', 'b'), ('PAID', 'g')]
-    TYPE_CHOICES = [('PAYMENT', 'p'), ('FINE', 'f')]
+    STATUS_CHOICES = [("b", "PENDING"), ("g", "PAID")]
+    TYPE_CHOICES = [("p", "PAYMENT"), ("f", "FINE")]
 
     status = models.CharField(max_length=1, choices=STATUS_CHOICES)
     type = models.CharField(max_length=1, choices=TYPE_CHOICES)
