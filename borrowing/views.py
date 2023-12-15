@@ -3,6 +3,7 @@ from django.utils import timezone
 
 from rest_framework import generics, status
 from rest_framework import viewsets, mixins
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import generics
 
@@ -14,26 +15,52 @@ from borrowing.serializers import (
 )
 
 
-class BorrowingListView(generics.ListCreateAPIView):
-    queryset = Borrowing.objects.select_related("book", "user")
+class BorrowingListView(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    generics.GenericAPIView
+):
+    queryset = Borrowing.objects.select_related("book_id", "user_id").filter(is_active=True)
     serializer_class = BorrowingSerializer
-
-
-class BorrowingDetailView(generics.RetrieveAPIView):
-    queryset = Borrowing.objects.select_related("book", "user")
-    serializer_class = BorrowingSerializer
-
-
-class UserBorrowingsListView(generics.ListAPIView):
-    serializer_class = BorrowingSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         user = self.request.user
-        return Borrowing.objects.filter(user=user)
+        user_id = self.request.query_params.get('user_id')
+
+        if user.is_superuser and user_id:
+            return Borrowing.objects.filter(user_id=user_id, is_active=True)
+        return Borrowing.objects.filter(user_id=user.id, is_active=True)
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
 
 
-class BorrowingViewSet():
-    pass
+class BorrowingDetailView(
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    generics.GenericAPIView
+):
+
+    queryset = Borrowing.objects.select_related("book_id", "user_id").filter(is_active=True)
+    serializer_class = BorrowingDetailSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def patch(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
 
 
 class BorrowingReturnView(generics.UpdateAPIView):
