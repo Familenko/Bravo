@@ -2,44 +2,46 @@
 
 from rest_framework import generics, permissions
 
-from payment.models import Payment
+from borrowing.models import Borrowing
 from payment.serializers import (
-    PaymentSerializer,
     PaymentDetailSerializer,
-    PaymentCreateSerializer,
     PaymentListSerializer,
 )
 
 from .models import Payment
 
 
-class PaymentViewSet(
-    generics.CreateAPIView,
+class PaymentList(
     generics.ListAPIView,
+    generics.GenericAPIView
+):
+    queryset = Payment.objects.select_related("borrowing_id")
+    serializer_class = PaymentListSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        borrowings = Borrowing.objects.filter(user_id=self.request.user)
+        payments = Payment.objects.filter(borrowing_id__in=borrowings)
+
+        return payments
+
+
+class PaymentDetail(
     generics.RetrieveAPIView,
     generics.GenericAPIView
 ):
-
     queryset = Payment.objects.all()
-    serializer_class = PaymentSerializer
-    permission_classes = [permissions.AllowAny]
+    serializer_class = PaymentDetailSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
-    def get_serializer_class(self):
-        if self.action == "create":
-            return PaymentCreateSerializer
-        elif self.action == "list":
-            return PaymentListSerializer
-        elif self.action == "retrieve":
-            return PaymentDetailSerializer
-        return PaymentSerializer
-
-    def get_permissions(self):
-        if self.action in ["list", "retrieve"]:
-            return [permissions.IsAuthenticated()]
-        return [permissions.AllowAny()]
+    # def get_queryset(self):
+    #     borrowings = Borrowing.objects.filter(user_id=self.request.user)
+    #     payments = Payment.objects.filter(borrowing_id__in=borrowings)
+    #     return payments.filter(
+    #         id=self.kwargs["pk"],
+    #     )
 
     def get_queryset(self):
-        if self.request.user.is_staff:
-            return Payment.objects.all()
-        else:
-            return Payment.objects.filter(borrowing_id__user=self.request.user)
+        borrowings = Borrowing.objects.filter(user_id=self.request.user)
+        payments = Payment.objects.filter(borrowing_id__in=borrowings, id=self.kwargs["pk"])
+        return payments
