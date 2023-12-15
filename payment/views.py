@@ -1,6 +1,6 @@
 # from django.shortcuts import render
 
-from rest_framework import viewsets, mixins, permissions
+from rest_framework import generics, permissions
 
 from payment.models import Payment
 from payment.serializers import (
@@ -10,22 +10,26 @@ from payment.serializers import (
     PaymentListSerializer,
 )
 
+from .models import Payment
+
 
 class PaymentViewSet(
-    mixins.CreateModelMixin,
-    mixins.ListModelMixin,
-    mixins.RetrieveModelMixin,
-    viewsets.GenericViewSet,
+    generics.CreateAPIView,
+    generics.ListAPIView,
+    generics.RetrieveAPIView,
+    generics.GenericAPIView
 ):
 
     queryset = Payment.objects.all()
+    serializer_class = PaymentSerializer
+    permission_classes = [permissions.AllowAny]
 
     def get_serializer_class(self):
         if self.action == "create":
             return PaymentCreateSerializer
-        if self.action == "list":
+        elif self.action == "list":
             return PaymentListSerializer
-        if self.action == "retrieve":
+        elif self.action == "retrieve":
             return PaymentDetailSerializer
         return PaymentSerializer
 

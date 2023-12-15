@@ -8,12 +8,12 @@ class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
         fields = (
-            'id',
-            'status',
-            'type',
-            'borrowing',
-            'session_url',
-            'session_id',
+            "id",
+            "status",
+            "type",
+            "borrowing",
+            "session_url",
+            "session_id",
         )
 
 
@@ -38,13 +38,13 @@ class PaymentDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         fields = (
-            'id',
-            'status',
-            'type',
-            'borrowing_id',
-            'session_url',
-            'session_id',
-            'taken_book',)
+            "id",
+            "status",
+            "type",
+            "borrowing_id",
+            "session_url",
+            "session_id",
+            "taken_book",)
 
         model = Payment
 
@@ -53,12 +53,12 @@ class PaymentCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
         fields = (
-            'id',
-            'status',
-            'type',
-            'borrowing_id',
-            'session_url',
-            'session_id',
+            "id",
+            "status",
+            "type",
+            "borrowing_id",
+            "session_url",
+            "session_id",
         )
 
     def validate(self, attrs):
