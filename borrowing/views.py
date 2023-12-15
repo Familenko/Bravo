@@ -49,7 +49,6 @@ class BorrowingDetailView(
 
     def get_queryset(self):
         user = self.request.user
-        user_id = self.request.query_params.get("user_id")
 
         if user.is_superuser:
             return Borrowing.objects.filter(is_active=True)
@@ -69,7 +68,7 @@ class BorrowingDetailView(
 
 
 class BorrowingReturnView(generics.UpdateAPIView):
-    queryset = Borrowing.objects.select_related("book", "user")
+    queryset = Borrowing.objects.select_related("book_id", "user_id")
     serializer_class = BorrowingSerializer
 
     def update(self, request, *args, **kwargs):
