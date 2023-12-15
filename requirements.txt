@@ -36,3 +36,4 @@ rpds-py==0.13.2
 sqlparse==0.4.4
 uritemplate==4.1.1
 yarl==1.9.4
+stripe==7.9.0
