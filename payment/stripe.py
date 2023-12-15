@@ -1,13 +1,12 @@
-# This example sets up an endpoint using the Flask framework.
-# Watch this video to get started: https://youtu.be/7Ul1vfmsDck.
-
+# myapp/views.py
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 import stripe
 
-stripe.api_key = 'sk_test_51ONXeYFz9k4dxDJnt41KauA0CrSAS0XOvygGQEdnhazhRxLWQtGGHxWFDWuBpDCJSsq8A0hXzNqN7uPqZY4puBrk00mxJcinIW'
+stripe.api_key = "sk_test_51ONXeYFz9k4dxDJnt41KauA0CrSAS0XOvygGQEdnhazhRxLWQtGGHxWFDWuBpDCJSsq8A0hXzNqN7uPqZY4puBrk00mxJcinIW"
 
-
+@csrf_exempt
 def create_checkout_session(request):
     session = stripe.checkout.Session.create(
         line_items=[{
@@ -25,4 +24,4 @@ def create_checkout_session(request):
         cancel_url='http://localhost:8000/cancel',
     )
 
-    return redirect(session.url, code=303)
+    return redirect(session.url)
