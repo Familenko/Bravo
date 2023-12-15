@@ -30,11 +30,7 @@ class BorrowedBookSerializer(serializers.ModelSerializer):
 
 
 class PaymentDetailSerializer(serializers.ModelSerializer):
-    taken_book = BorrowedBookSerializer(
-        source="borrowing_id",
-        many=False,
-        read_only=True
-    )
+    # taken_book = BorrowedBookSerializer()
 
     class Meta:
         fields = (
@@ -43,8 +39,8 @@ class PaymentDetailSerializer(serializers.ModelSerializer):
             "type",
             "borrowing_id",
             "session_url",
-            "session_id",
-            "taken_book",)
+            "session_id",)
+            # "taken_book",)
 
         model = Payment
 
@@ -53,7 +49,6 @@ class PaymentCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
         fields = (
-            "id",
             "status",
             "type",
             "borrowing_id",
