@@ -3,7 +3,11 @@ from django.views.decorators.csrf import csrf_exempt
 import stripe
 
 
-stripe.api_key = "sk_test_51ONXeYFz9k4dxDJnt41KauA0CrSAS0XOvygGQEdnhazhRxLWQtGGHxWFDWuBpDCJSsq8A0hXzNqN7uPqZY4puBrk00mxJcinIW"
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+stripe_api_key = os.getenv("STRIPE_API_KEY")
 
 
 @csrf_exempt

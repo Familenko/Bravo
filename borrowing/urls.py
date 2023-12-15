@@ -2,7 +2,7 @@ from django.urls import path
 
 from borrowing.views import (
     BorrowingListView,
-    BorrowingDetailView,
+    BorrowingDetailView, BorrowingCreateView,
 )
 
 from .views import BorrowingReturnView
@@ -17,6 +17,9 @@ urlpatterns = [
     ),
     path(
         "borrowings/<int:pk>/return/", BorrowingReturnView.as_view(), name="return_book"
+    ),
+    path(
+        "borrowings/", BorrowingCreateView.as_view(), name="borrowing-create"
     ),
 ]
 
