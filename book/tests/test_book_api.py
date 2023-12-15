@@ -7,7 +7,7 @@ from django.test import TestCase
 from book.models import Book
 from book.serializers import BookSerializer
 
-BOOK_LIST_URL = reverse("book:book-list")
+BOOK_URL = reverse("book:book-list")
 
 
 def detail_url(book_id):
@@ -33,7 +33,7 @@ class UnauthenticatedBookApiTests(TestCase):
         self.url = detail_url(self.book.id)
 
     def test_list_books(self):
-        response = self.client.get(BOOK_LIST_URL)
+        response = self.client.get(BOOK_URL)
 
         books = Book.objects.order_by("id")
         serializer = BookSerializer(books, many=True)
@@ -47,6 +47,15 @@ class UnauthenticatedBookApiTests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, serializer.data)
 
+    def test_filter_by_title(self):
+        book1 = sample_book(title="testtitleforsure")
+        book2 = sample_book(title="exactlytesttitle")
+        serializer1 = BookSerializer(book1)
+        serializer2 = BookSerializer(book2)
+        response = self.client.get(BOOK_URL, {"title": f"{book1.title}"})
+        self.assertIn(serializer1.data, response.data)
+        self.assertNotIn(serializer2.data, response.data)
+
     def test_create_forbidden(self):
         payload = {
             "title": "testtitle",
@@ -55,7 +64,7 @@ class UnauthenticatedBookApiTests(TestCase):
             "inventory": 1,
             "daily_fee": 10,
         }
-        response = self.client.post(BOOK_LIST_URL, payload)
+        response = self.client.post(BOOK_URL, payload)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_put_forbidden(self):
@@ -93,12 +102,21 @@ class AuthenticatedBookApiTests(TestCase):
         self.url = detail_url(self.book.id)
 
     def test_list_books(self):
-        response = self.client.get(BOOK_LIST_URL)
+        response = self.client.get(BOOK_URL)
         books = Book.objects.order_by("id")
         serializer = BookSerializer(books, many=True)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, serializer.data)
+
+    def test_filter_by_title(self):
+        book1 = sample_book(title="Kobzar")
+        book2 = sample_book(title="Harry Poter")
+        serializer1 = BookSerializer(book1)
+        serializer2 = BookSerializer(book2)
+        response = self.client.get(BOOK_URL, {"title": f"{book1.title}"})
+        self.assertIn(serializer1.data, response.data)
+        self.assertNotIn(serializer2.data, response.data)
 
     def test_detail_book(self):
         response = self.client.get(self.url)
@@ -114,7 +132,7 @@ class AuthenticatedBookApiTests(TestCase):
             "inventory": 1,
             "daily_fee": 10,
         }
-        response = self.client.post(BOOK_LIST_URL, payload)
+        response = self.client.post(BOOK_URL, payload)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_put_forbidden(self):
@@ -159,7 +177,7 @@ class AdminBookApiTests(TestCase):
             "inventory": 1,
             "daily_fee": 10,
         }
-        response = self.client.post(BOOK_LIST_URL, payload)
+        response = self.client.post(BOOK_URL, payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         book = Book.objects.get(id=response.data["id"])
         for key in payload.keys():
