@@ -10,11 +10,10 @@ from rest_framework import generics
 from borrowing.models import Borrowing
 from borrowing.serializers import (
     BorrowingSerializer,
-    BorrowingListSerializer,
     BorrowingDetailSerializer,
 )
 
-
+a
 class BorrowingListView(
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
