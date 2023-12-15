@@ -1,5 +1,4 @@
-from django.urls import path, include
-from rest_framework import routers
+from django.urls import path
 
 from payment.stripe import create_checkout_session
 from payment.views import PaymentList, PaymentDetail

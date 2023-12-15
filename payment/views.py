@@ -15,7 +15,7 @@ class PaymentList(
     generics.ListAPIView,
     generics.GenericAPIView
 ):
-    queryset = Payment.objects.all()
+    queryset = Payment.objects.select_related("borrowing_id")
     serializer_class = PaymentListSerializer
     permission_classes = [permissions.IsAuthenticated]
 
