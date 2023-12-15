@@ -1,18 +1,21 @@
+import os
+
 from django.http import HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
-from .models import Borrowing, Payment
 import stripe
 
-import os
 from dotenv import load_dotenv
+
+from .models import Borrowing, Payment
+
 
 load_dotenv()
 stripe_api_key = os.getenv("STRIPE_API_KEY")
 
 
 @csrf_exempt
-@api_view(['POST'])
+@api_view(["POST"])
 def create_checkout_session(request, borrowing_id):
     borrowing = Borrowing.objects.get(id=borrowing_id)
 
@@ -22,23 +25,23 @@ def create_checkout_session(request, borrowing_id):
 
     session = stripe.checkout.Session.create(
         line_items=[{
-            'price_data': {
-                'currency': 'usd',
-                'product_data': {
-                    'name': f'Book - {borrowing.book_id.title}',
+            "price_data": {
+                "currency": "usd",
+                "product_data": {
+                    "name": f"Book - {borrowing.book_id.title}",
                 },
-                'unit_amount': total_amount,
+                "unit_amount": total_amount,
             },
-            'quantity': 1,
+            "quantity": 1,
         }],
-        mode='payment',
-        success_url='http://localhost:8000/success',
-        cancel_url='http://localhost:8000/cancel',
+        mode="payment",
+        success_url="http://localhost:8000/success",
+        cancel_url="http://localhost:8000/cancel",
     )
 
     payment = Payment.objects.create(
-        status='b',
-        type='p',
+        status="b",
+        type="p",
         session_url=session.url,
         session_id=session.id,
         borrowing=borrowing,
