@@ -140,6 +140,6 @@ REST_FRAMEWORK = {
         "user.custom_jwt.AuthorizeHeaderJWTAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": (
-        "rest_framework.permissions.IsAuthenticated",
+        "rest_framework.permissions.IsAdminOrReadOnly",
     ),
 }
