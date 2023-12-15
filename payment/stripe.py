@@ -1,6 +1,5 @@
-# myapp/views.py
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.shortcuts import render
+from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 import stripe
 
@@ -13,9 +12,9 @@ def create_checkout_session(request):
             'price_data': {
                 'currency': 'usd',
                 'product_data': {
-                    'name': 'T-shirt',
+                    'name': 'Book',
                 },
-                'unit_amount': 2000,
+                'unit_amount': 3000,
             },
             'quantity': 1,
         }],
@@ -24,4 +23,5 @@ def create_checkout_session(request):
         cancel_url='http://localhost:8000/cancel',
     )
 
-    return redirect(session.url)
+    # Використовуйте HttpResponseRedirect та встановіть код статусу явно
+    return HttpResponseRedirect(session.url, status=303)
