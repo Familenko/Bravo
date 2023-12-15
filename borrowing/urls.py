@@ -1,17 +1,15 @@
 from django.urls import path
 
 from borrowing.views import (
-    BorrowingSerializer,
     BorrowingListView,
     BorrowingDetailView,
 )
 
 from .views import BorrowingReturnView
 
-from .views import BorrowingReturnView
 
 urlpatterns = [
-    path("borrowings_list/",
+    path("borrowing_list/",
          BorrowingListView.as_view(),
          name="borrowing-list"),
 
