@@ -37,7 +37,6 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
     # custom apps
     "book",
     "user",
@@ -139,5 +138,8 @@ SIMPLE_JWT = {
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "user.custom_jwt.AuthorizeHeaderJWTAuthentication",
+    ),
+    "DEFAULT_PERMISSION_CLASSES": (
+        "book.permissions.IsAdminOrReadOnly",
     ),
 }
