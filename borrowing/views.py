@@ -24,8 +24,8 @@ class BorrowingListView(
         user = self.request.user
         user_id = self.request.query_params.get("user_id")
 
-        if user.is_superuser and user_id:
-            return Borrowing.objects.filter(user_id=user_id, is_active=True)
+        if user.is_superuser:
+            return Borrowing.objects.all()
         return Borrowing.objects.filter(user_id=user.id, is_active=True)
 
     def get(self, request, *args, **kwargs):
@@ -51,8 +51,8 @@ class BorrowingDetailView(
         user = self.request.user
         user_id = self.request.query_params.get("user_id")
 
-        if user.is_superuser and user_id:
-            return Borrowing.objects.filter(user_id=user_id, is_active=True)
+        if user.is_superuser:
+            return Borrowing.objects.filter(is_active=True)
         return Borrowing.objects.filter(user_id=user.id, is_active=True)
 
     def get(self, request, *args, **kwargs):
