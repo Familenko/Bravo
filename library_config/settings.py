@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "user",
     "borrowing",
     "payment",
+    "notification",
     # third party apps
     "rest_framework",
 ]
