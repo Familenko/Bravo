@@ -15,14 +15,13 @@ from borrowing.serializers import (
 
 
 class BorrowingListView(generics.ListCreateAPIView):
-    queryset = Borrowing.objects.select_related("book", "user")
+    queryset = Borrowing.objects.all()
     serializer_class = BorrowingSerializer
 
 
 class BorrowingDetailView(generics.RetrieveAPIView):
-    queryset = Borrowing.objects.select_related("book", "user")
+    queryset = Borrowing.objects.all()
     serializer_class = BorrowingSerializer
-
 
 class UserBorrowingsListView(generics.ListAPIView):
     serializer_class = BorrowingSerializer
@@ -30,10 +29,6 @@ class UserBorrowingsListView(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user
         return Borrowing.objects.filter(user=user)
-
-
-class BorrowingViewSet():
-    pass
 
 
 class BorrowingReturnView(generics.UpdateAPIView):
