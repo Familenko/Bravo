@@ -29,9 +29,10 @@ def sample_book(**params):
 class UnauthenticatedBookApiTests(TestCase):
     def setUp(self) -> None:
         self.client = APIClient()
+        self.book = sample_book()
+        self.url = detail_url(self.book.id)
 
     def test_list_books(self):
-        sample_book()
         response = self.client.get(BOOK_LIST_URL)
 
         books = Book.objects.order_by("id")
@@ -41,12 +42,8 @@ class UnauthenticatedBookApiTests(TestCase):
         self.assertEqual(response.data, serializer.data)
 
     def test_detail_book(self):
-        book = sample_book()
-
-        url = detail_url(book.id)
-        response = self.client.get(url)
-
-        serializer = BookSerializer(book)
+        response = self.client.get(self.url)
+        serializer = BookSerializer(self.book)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, serializer.data)
 
@@ -61,6 +58,29 @@ class UnauthenticatedBookApiTests(TestCase):
         response = self.client.post(BOOK_LIST_URL, payload)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
+    def test_put_forbidden(self):
+        payload = {
+            "title": "testtitle2",
+            "author": "testauthor2",
+            "cover": "HARD",
+            "inventory": 1,
+            "daily_fee": 10.00,
+        }
+        response = self.client.put(self.url, payload)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_patch_forbidden(self):
+        payload = {
+            "title": "testtitle2",
+            "author": "testauthor2",
+        }
+        response = self.client.patch(self.url, payload)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_delete_forbidden(self):
+        response = self.client.delete(self.url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
 
 class AuthenticatedBookApiTests(TestCase):
     def setUp(self) -> None:
@@ -71,6 +91,20 @@ class AuthenticatedBookApiTests(TestCase):
         self.client.force_authenticate(self.user)
         self.book = sample_book()
         self.url = detail_url(self.book.id)
+
+    def test_list_books(self):
+        response = self.client.get(BOOK_LIST_URL)
+        books = Book.objects.order_by("id")
+        serializer = BookSerializer(books, many=True)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, serializer.data)
+
+    def test_detail_book(self):
+        response = self.client.get(self.url)
+        serializer = BookSerializer(self.book)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, serializer.data)
 
     def test_create_forbidden(self):
         payload = {
