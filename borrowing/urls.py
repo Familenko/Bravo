@@ -9,29 +9,26 @@ from borrowing.views import (
 
 urlpatterns = [
     path(
-        "borrowings/<int:pk>/",
+        "<int:pk>/",
         BorrowingDetailView.as_view(),
         name="borrowing-detail",
-        methods=["get"]
     ),
 
     path(
-        "borrowings/",
+        "",
         BorrowingDetailView.as_view(),
         name="borrowing-list",
-        methods=["get"]
     ),
 
     path(
-        "borrowings/<int:pk>/return/",
+        "<int:pk>/return/",
         BorrowingReturnView.as_view(),
         name="return_book"
     ),
     path(
-        "borrowings/",
+        "",
         BorrowingCreateView.as_view(),
         name="borrowing-create",
-        methods=["post"]
     ),
 ]
 

@@ -22,6 +22,7 @@ class BorrowingDetailView(
     queryset = Borrowing.objects.select_related("book_id", "user_id")
     serializer_class = BorrowingDetailSerializer
     permission_classes = [IsAuthenticated]
+    http_method_names = ["get"]
 
     def get_queryset(self):
         user = self.request.user
@@ -87,6 +88,7 @@ class BorrowingCreateView(generics.CreateAPIView):
     queryset = Borrowing.objects.select_related("book_id", "user_id")
     serializer_class = BorrowingSerializer
     permission_classes = [IsAuthenticated]
+    http_method_names = ["post"]
 
     def perform_create(self, serializer):
         borrowing = serializer.save()
