@@ -10,6 +10,9 @@ from borrowing.serializers import (
     BorrowingDetailSerializer,
 )
 from payment.helper_function import create_checkout_session
+from payment.models import Payment
+
+FINE_MULTIPLIER = 2
 
 
 class BorrowingListView(
@@ -82,6 +85,17 @@ class BorrowingReturnView(generics.UpdateAPIView):
             )
 
         borrowing.actual_return_date = timezone.now()
+
+        overdue_days = (borrowing.actual_return_date - borrowing.expected_return_date).days
+
+        if overdue_days > 0:
+            daily_fee = borrowing.book_id.daily_fee
+            fine_amount = overdue_days * daily_fee * FINE_MULTIPLIER
+
+            create_checkout_session(self.request, borrowing.id, fine_amount)
+
+        else:
+            create_checkout_session(self.request, borrowing.id)
 
         borrowing.book_id.inventory += 1
         borrowing.book_id.save()

@@ -16,12 +16,13 @@ stripe_api_key = os.getenv("STRIPE_API_KEY")
 
 @csrf_exempt
 @api_view(["POST"])
-def create_checkout_session(request, borrowing_id):
+def create_checkout_session(request, borrowing_id, total_amount=None):
     borrowing = Borrowing.objects.get(id=borrowing_id)
 
-    borrowed_days = (borrowing.expected_return_date - borrowing.borrow_date).days
-    total_price = borrowing.book_id.daily_fee * borrowed_days
-    total_amount = int(total_price * 100)
+    if total_amount is None:
+        borrowed_days = (borrowing.expected_return_date - borrowing.borrow_date).days
+        total_price = borrowing.book_id.daily_fee * borrowed_days
+        total_amount = int(total_price * 100)
 
     session = stripe.checkout.Session.create(
         line_items=[{
