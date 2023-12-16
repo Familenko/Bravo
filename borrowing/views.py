@@ -11,61 +11,45 @@ from borrowing.serializers import (
 )
 from payment.helper_function import create_checkout_session
 
-
-class BorrowingListView(
-    mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView
-):
-    queryset = Borrowing.objects.select_related("book_id", "user_id").filter(
-        is_active=True
-    )
-    serializer_class = BorrowingSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        user = self.request.user
-        user_id = self.request.query_params.get("user_id")
-
-        if user.is_superuser:
-            return Borrowing.objects.all()
-        return Borrowing.objects.filter(user_id=user.id, is_active=True)
-
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
+FINE_MULTIPLIER = 2
 
 
 class BorrowingDetailView(
     mixins.RetrieveModelMixin,
-    mixins.UpdateModelMixin,
-    mixins.DestroyModelMixin,
+    mixins.ListModelMixin,
     generics.GenericAPIView,
 ):
-    queryset = Borrowing.objects.select_related("book_id", "user_id").filter(
-        is_active=True
-    )
+    queryset = Borrowing.objects.select_related("book_id", "user_id")
     serializer_class = BorrowingDetailSerializer
     permission_classes = [IsAuthenticated]
+    http_method_names = ["get"]
 
     def get_queryset(self):
         user = self.request.user
 
+        user_id = self.request.query_params.get("user_id")
+        is_active = self.request.query_params.get("is_active")
+
         if user.is_superuser:
-            return Borrowing.objects.filter(is_active=True)
-        return Borrowing.objects.filter(user_id=user.id, is_active=True)
+            queryset = Borrowing.objects.all()
+
+            if user_id:
+                queryset = queryset.filter(user_id=user_id)
+
+            if is_active:
+                is_active = is_active.lower() == "true"
+                queryset = queryset.filter(is_active=is_active)
+
+        else:
+            queryset = Borrowing.objects.filter(user_id=user.id)
+
+        return queryset
 
     def get(self, request, *args, **kwargs):
-        return self.retrieve(request, *args, **kwargs)
-
-    def put(self, request, *args, **kwargs):
-        return self.update(request, *args, **kwargs)
-
-    def patch(self, request, *args, **kwargs):
-        return self.partial_update(request, *args, **kwargs)
-
-    def delete(self, request, *args, **kwargs):
-        return self.destroy(request, *args, **kwargs)
+        if "id" in kwargs:
+            return self.retrieve(request, *args, **kwargs)
+        else:
+            return self.list(request, *args, **kwargs)
 
 
 class BorrowingReturnView(generics.UpdateAPIView):
@@ -83,6 +67,17 @@ class BorrowingReturnView(generics.UpdateAPIView):
 
         borrowing.actual_return_date = timezone.now()
 
+        overdue_days = (borrowing.actual_return_date - borrowing.expected_return_date).days
+
+        if overdue_days > 0:
+            daily_fee = borrowing.book_id.daily_fee
+            fine_amount = overdue_days * daily_fee * FINE_MULTIPLIER
+
+            create_checkout_session(self.request, borrowing.id, fine_amount)
+
+        else:
+            create_checkout_session(self.request, borrowing.id)
+
         borrowing.book_id.inventory += 1
         borrowing.book_id.save()
 
@@ -93,6 +88,7 @@ class BorrowingCreateView(generics.CreateAPIView):
     queryset = Borrowing.objects.select_related("book_id", "user_id")
     serializer_class = BorrowingSerializer
     permission_classes = [IsAuthenticated]
+    http_method_names = ["post"]
 
     def perform_create(self, serializer):
         borrowing = serializer.save()
