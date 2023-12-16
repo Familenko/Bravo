@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.utils import timezone
 
 from rest_framework import generics, status, mixins
@@ -10,6 +9,7 @@ from borrowing.serializers import (
     BorrowingSerializer,
     BorrowingDetailSerializer,
 )
+from payment.helper_function import create_checkout_session
 
 
 class BorrowingListView(
@@ -87,3 +87,16 @@ class BorrowingReturnView(generics.UpdateAPIView):
         borrowing.book_id.save()
 
         return Response(BorrowingSerializer(borrowing).data, status=status.HTTP_200_OK)
+
+
+class BorrowingCreateView(generics.CreateAPIView):
+    queryset = Borrowing.objects.select_related("book_id", "user_id")
+    serializer_class = BorrowingSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        borrowing = serializer.save()
+
+        create_checkout_session(self.request, borrowing.id)
+
+        return Response(serializer.data)

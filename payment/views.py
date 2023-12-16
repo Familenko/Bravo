@@ -1,5 +1,3 @@
-# from django.shortcuts import render
-
 from rest_framework import generics, permissions
 
 from borrowing.models import Borrowing
@@ -33,13 +31,6 @@ class PaymentDetail(
     queryset = Payment.objects.all()
     serializer_class = PaymentDetailSerializer
     permission_classes = [permissions.IsAuthenticated]
-
-    # def get_queryset(self):
-    #     borrowings = Borrowing.objects.filter(user_id=self.request.user)
-    #     payments = Payment.objects.filter(borrowing_id__in=borrowings)
-    #     return payments.filter(
-    #         id=self.kwargs["pk"],
-    #     )
 
     def get_queryset(self):
         borrowings = Borrowing.objects.filter(user_id=self.request.user)
