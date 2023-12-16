@@ -12,6 +12,7 @@ from .models import Borrowing, Payment
 
 load_dotenv()
 stripe_api_key = os.getenv("STRIPE_API_KEY")
+CURRENCY = 100
 
 
 @csrf_exempt
@@ -22,7 +23,7 @@ def create_checkout_session(request, borrowing_id, total_amount=None):
     if total_amount is None:
         borrowed_days = (borrowing.expected_return_date - borrowing.borrow_date).days
         total_price = borrowing.book_id.daily_fee * borrowed_days
-        total_amount = int(total_price * 100)
+        total_amount = int(total_price * CURRENCY)
 
     session = stripe.checkout.Session.create(
         line_items=[{
