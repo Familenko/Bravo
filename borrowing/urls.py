@@ -1,25 +1,37 @@
 from django.urls import path
 
 from borrowing.views import (
-    BorrowingListView,
-    BorrowingDetailView, BorrowingCreateView,
+    BorrowingDetailView,
+    BorrowingCreateView,
+    BorrowingReturnView
 )
-
-from .views import BorrowingReturnView
 
 
 urlpatterns = [
-    path("borrowing_list/", BorrowingListView.as_view(), name="borrowing-list"),
     path(
-        "borrowing_list/<int:pk>/",
+        "borrowings/<int:pk>/",
         BorrowingDetailView.as_view(),
         name="borrowing-detail",
+        methods=["get"]
+    ),
+
+    path(
+        "borrowings/",
+        BorrowingDetailView.as_view(),
+        name="borrowing-list",
+        methods=["get"]
+    ),
+
+    path(
+        "borrowings/<int:pk>/return/",
+        BorrowingReturnView.as_view(),
+        name="return_book"
     ),
     path(
-        "borrowings/<int:pk>/return/", BorrowingReturnView.as_view(), name="return_book"
-    ),
-    path(
-        "borrowings/", BorrowingCreateView.as_view(), name="borrowing-create"
+        "borrowings/",
+        BorrowingCreateView.as_view(),
+        name="borrowing-create",
+        methods=["post"]
     ),
 ]
 

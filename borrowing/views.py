@@ -10,65 +10,45 @@ from borrowing.serializers import (
     BorrowingDetailSerializer,
 )
 from payment.helper_function import create_checkout_session
-from payment.models import Payment
 
 FINE_MULTIPLIER = 2
 
 
-class BorrowingListView(
-    mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView
-):
-    queryset = Borrowing.objects.select_related("book_id", "user_id").filter(
-        is_active=True
-    )
-    serializer_class = BorrowingSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        user = self.request.user
-        user_id = self.request.query_params.get("user_id")
-
-        if user.is_superuser:
-            return Borrowing.objects.all()
-        return Borrowing.objects.filter(user_id=user.id, is_active=True)
-
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
-
-
 class BorrowingDetailView(
     mixins.RetrieveModelMixin,
-    mixins.UpdateModelMixin,
-    mixins.DestroyModelMixin,
+    mixins.ListModelMixin,  # Додаємо ListModelMixin
     generics.GenericAPIView,
 ):
-    queryset = Borrowing.objects.select_related("book_id", "user_id").filter(
-        is_active=True
-    )
+    queryset = Borrowing.objects.select_related("book_id", "user_id")
     serializer_class = BorrowingDetailSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         user = self.request.user
 
+        user_id = self.request.query_params.get('user_id')
+        is_active = self.request.query_params.get('is_active')
+
         if user.is_superuser:
-            return Borrowing.objects.filter(is_active=True)
-        return Borrowing.objects.filter(user_id=user.id, is_active=True)
+            queryset = Borrowing.objects.all()
+
+            if user_id:
+                queryset = queryset.filter(user_id=user_id)
+
+            if is_active:
+                is_active = is_active.lower() == 'true'
+                queryset = queryset.filter(is_active=is_active)
+
+        else:
+            queryset = Borrowing.objects.filter(user_id=user.id)
+
+        return queryset
 
     def get(self, request, *args, **kwargs):
-        return self.retrieve(request, *args, **kwargs)
-
-    def put(self, request, *args, **kwargs):
-        return self.update(request, *args, **kwargs)
-
-    def patch(self, request, *args, **kwargs):
-        return self.partial_update(request, *args, **kwargs)
-
-    def delete(self, request, *args, **kwargs):
-        return self.destroy(request, *args, **kwargs)
+        if 'id' in kwargs:
+            return self.retrieve(request, *args, **kwargs)
+        else:
+            return self.list(request, *args, **kwargs)
 
 
 class BorrowingReturnView(generics.UpdateAPIView):
