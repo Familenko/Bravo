@@ -16,7 +16,7 @@ FINE_MULTIPLIER = 2
 
 class BorrowingDetailView(
     mixins.RetrieveModelMixin,
-    mixins.ListModelMixin,  # Додаємо ListModelMixin
+    mixins.ListModelMixin,
     generics.GenericAPIView,
 ):
     queryset = Borrowing.objects.select_related("book_id", "user_id")
@@ -26,8 +26,8 @@ class BorrowingDetailView(
     def get_queryset(self):
         user = self.request.user
 
-        user_id = self.request.query_params.get('user_id')
-        is_active = self.request.query_params.get('is_active')
+        user_id = self.request.query_params.get("user_id")
+        is_active = self.request.query_params.get("is_active")
 
         if user.is_superuser:
             queryset = Borrowing.objects.all()
@@ -36,7 +36,7 @@ class BorrowingDetailView(
                 queryset = queryset.filter(user_id=user_id)
 
             if is_active:
-                is_active = is_active.lower() == 'true'
+                is_active = is_active.lower() == "true"
                 queryset = queryset.filter(is_active=is_active)
 
         else:
@@ -45,7 +45,7 @@ class BorrowingDetailView(
         return queryset
 
     def get(self, request, *args, **kwargs):
-        if 'id' in kwargs:
+        if "id" in kwargs:
             return self.retrieve(request, *args, **kwargs)
         else:
             return self.list(request, *args, **kwargs)
