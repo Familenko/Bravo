@@ -14,6 +14,8 @@ load_dotenv()
 stripe_api_key = os.getenv("STRIPE_API_KEY")
 CURRENCY = 100
 
+CURRNECY = 100
+
 
 @csrf_exempt
 @api_view(["POST"])
