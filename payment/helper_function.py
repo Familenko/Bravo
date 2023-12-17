@@ -35,8 +35,16 @@ def create_checkout_session(request, borrowing_id, total_amount=None):
             "quantity": 1,
         }],
         mode="payment",
-        success_url=request.build_absolute_uri(reverse('success', kwargs={'borrowing_id': borrowing_id})),
-        cancel_url=request.build_absolute_uri(reverse('cancel', kwargs={'borrowing_id': borrowing_id})),
+        success_url=request.build_absolute_uri(
+            reverse(
+                'payment:success', kwargs={'borrowing_id': borrowing_id}
+            )
+        ),
+        cancel_url=request.build_absolute_uri(
+            reverse(
+                'payment:cancel', kwargs={'borrowing_id': borrowing_id}
+            )
+        ),
     )
 
     payment = Payment.objects.create(
