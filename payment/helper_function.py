@@ -1,26 +1,22 @@
-import os
-
 from django.http import HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import get_object_or_404, reverse
 from rest_framework.decorators import api_view
 import stripe
-
 from dotenv import load_dotenv
+import os
 
 from .models import Borrowing, Payment
-
 
 load_dotenv()
 stripe_api_key = os.getenv("STRIPE_API_KEY")
 CURRENCY = 100
 
-CURRNECY = 100
-
 
 @csrf_exempt
 @api_view(["POST"])
 def create_checkout_session(request, borrowing_id, total_amount=None):
-    borrowing = Borrowing.objects.get(id=borrowing_id)
+    borrowing = get_object_or_404(Borrowing, id=borrowing_id)
 
     if total_amount is None:
         borrowed_days = (borrowing.expected_return_date - borrowing.borrow_date).days
@@ -39,8 +35,8 @@ def create_checkout_session(request, borrowing_id, total_amount=None):
             "quantity": 1,
         }],
         mode="payment",
-        success_url="http://localhost:8000/success",
-        cancel_url="http://localhost:8000/cancel",
+        success_url=request.build_absolute_uri(reverse('success', kwargs={'borrowing_id': borrowing_id})),
+        cancel_url=request.build_absolute_uri(reverse('cancel', kwargs={'borrowing_id': borrowing_id})),
     )
 
     payment = Payment.objects.create(
