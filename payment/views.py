@@ -1,4 +1,3 @@
-from django.shortcuts import redirect
 from rest_framework import generics, permissions, status
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
@@ -49,7 +48,8 @@ class SuccessView(APIView):
                 status=status.HTTP_200_OK,
             )
         return Response(
-            {"message": "Your payment was successful"}, status=status.HTTP_200_OK
+            {"message": "Your payment was successful"},
+            status=status.HTTP_200_OK
         )
 
 

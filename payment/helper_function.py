@@ -22,7 +22,8 @@ def create_checkout_session(request, borrowing_id, total_amount=None):
     status_choices = "b"
 
     if total_amount is None:
-        borrowed_days = (borrowing.expected_return_date - borrowing.borrow_date).days
+        borrowed_days = (borrowing.expected_return_date
+                         - borrowing.borrow_date).days
         total_price = borrowing.book_id.daily_fee * borrowed_days
         total_amount = int(total_price * CURRENCY)
 

@@ -20,9 +20,11 @@ class Payment(models.Model):
     def money_to_pay(self):
         if self.borrowing_id.actual_return_date:
             days_borrowed = (
-                self.borrowing_id.actual_return_date - self.borrowing_id.borrow_date
+                self.borrowing_id.actual_return_date
+                - self.borrowing_id.borrow_date
             ).days
         else:
-            days_borrowed = (timezone.now().date() - self.borrowing_id.borrow_date).days
+            days_borrowed = (timezone.now().date()
+                             - self.borrowing_id.borrow_date).days
 
         return self.borrowing_id.book_id.daily_fee * days_borrowed

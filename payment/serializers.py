@@ -29,7 +29,9 @@ class BorrowedBookSerializer(serializers.ModelSerializer):
 
 
 class PaymentDetailSerializer(serializers.ModelSerializer):
-    taken_book = BorrowedBookSerializer(source="borrowing_id.book_id", read_only=True)
+    taken_book = BorrowedBookSerializer(
+        source="borrowing_id.book_id", read_only=True
+    )
 
     class Meta:
         fields = (
@@ -59,5 +61,7 @@ class PaymentCreateSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         borrowing_id = attrs.get("borrowing_id")
         if borrowing_id.actual_return_date:
-            raise serializers.ValidationError("You can't pay for already returned book")
+            raise serializers.ValidationError(
+                "You can't pay for already returned book"
+            )
         return attrs
