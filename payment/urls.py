@@ -1,6 +1,6 @@
 from django.urls import path
 
-from payment.helper_function import create_checkout_session
+from payment.stripe import create_checkout_session
 from payment.views import PaymentList, PaymentDetail, SuccessView, CancelView
 
 urlpatterns = [
