@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     "notification",
     # third party apps
     "rest_framework",
-    'drf_spectacular',
+    "drf_spectacular",
 ]
 
 MIDDLEWARE = [
