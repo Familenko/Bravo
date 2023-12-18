@@ -11,7 +11,7 @@ stripe_api_key = os.getenv("STRIPE_API_KEY")
 
 
 @csrf_exempt
-def create_checkout_session(request):
+def create_checkout_test_session(request):
     session = stripe.checkout.Session.create(
         line_items=[{
             'price_data': {
@@ -24,8 +24,8 @@ def create_checkout_session(request):
             'quantity': 1,
         }],
         mode='payment',
-        success_url='http://127.0.0.0:8000/success',
-        cancel_url='http://127.0.0.0:8000/cancel',
+        success_url='http://127.0.0.0:8000/',
+        cancel_url='http://127.0.0.0:8000/',
     )
 
     return HttpResponseRedirect(session.url, status=303)
