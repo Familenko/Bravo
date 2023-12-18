@@ -79,7 +79,9 @@ class BorrowingReturnView(generics.UpdateAPIView):
 
         borrowing.actual_return_date = timezone.now().date()
 
-        overdue_days = (borrowing.actual_return_date - borrowing.expected_return_date).days
+        overdue_days = (
+            borrowing.actual_return_date - borrowing.expected_return_date
+        ).days
 
         if overdue_days > 0:
             daily_fee = borrowing.book_id.daily_fee

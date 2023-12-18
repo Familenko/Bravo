@@ -88,7 +88,9 @@ class BorrowingTests(TestCase):
         response = self.client.get(url, {"user_id": self.user.id}, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 0)  # Перевіряємо, що у користувача немає видач
+        self.assertEqual(
+            len(response.data), 0
+        )  # Перевіряємо, що у користувача немає видач
 
     def test_list_all_borrowings_as_superuser(self):
         superuser = get_user_model().objects.create_superuser(
