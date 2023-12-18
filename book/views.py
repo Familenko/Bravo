@@ -1,13 +1,12 @@
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import generics
 
 from book.models import Book
-from book.serializers import (
-    BookSerializer,
-)
+from book.serializers import BookSerializer
 
 
 class BookListView(generics.ListCreateAPIView):
-    # for some reason queryset in here don't let to call it as self.queryset in def get_queryset
     serializer_class = BookSerializer
 
     def get_queryset(self):
@@ -16,6 +15,18 @@ class BookListView(generics.ListCreateAPIView):
         if title:
             queryset = queryset.filter(title__icontains=title)
         return queryset
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="title",
+                type=OpenApiTypes.STR,
+                description="Filter by book title (ex. ?title=Harry)"
+            ),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
 
 class BookDetailView(generics.RetrieveUpdateDestroyAPIView):
