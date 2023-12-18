@@ -29,26 +29,24 @@ def create_checkout_session(request, borrowing_id, total_amount=None):
         type_choices = "p"
 
     session = stripe.checkout.Session.create(
-        line_items=[{
-            "price_data": {
-                "currency": "usd",
-                "product_data": {
-                    "name": f"Book - {borrowing.book_id.title}",
+        line_items=[
+            {
+                "price_data": {
+                    "currency": "usd",
+                    "product_data": {
+                        "name": f"Book - {borrowing.book_id.title}",
+                    },
+                    "unit_amount": total_amount,
                 },
-                "unit_amount": total_amount,
-            },
-            "quantity": 1,
-        }],
+                "quantity": 1,
+            }
+        ],
         mode="payment",
         success_url=request.build_absolute_uri(
-            reverse(
-                'payment:success', kwargs={'borrowing_id': borrowing_id}
-            )
+            reverse("payment:success", kwargs={"borrowing_id": borrowing_id})
         ),
         cancel_url=request.build_absolute_uri(
-            reverse(
-                'payment:cancel', kwargs={'borrowing_id': borrowing_id}
-            )
+            reverse("payment:cancel", kwargs={"borrowing_id": borrowing_id})
         ),
     )
 
