@@ -25,7 +25,7 @@ def create_checkout_session(request):
         }],
         mode='payment',
         success_url='http://127.0.0.0:8000/success',
-        cancel_url='http://127.0.0.0:8000/cancel'',
+        cancel_url='http://127.0.0.0:8000/cancel',
     )
 
     return HttpResponseRedirect(session.url, status=303)
