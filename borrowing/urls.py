@@ -3,7 +3,7 @@ from django.urls import path
 from borrowing.views import (
     BorrowingDetailView,
     BorrowingCreateView,
-    BorrowingReturnView
+    BorrowingReturnView, BorrowingListView
 )
 
 
@@ -16,7 +16,7 @@ urlpatterns = [
 
     path(
         "",
-        BorrowingDetailView.as_view(),
+        BorrowingListView.as_view(),
         name="borrowing-list",
     ),
 
