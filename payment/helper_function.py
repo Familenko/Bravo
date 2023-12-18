@@ -22,33 +22,32 @@ def create_checkout_session(request, borrowing_id, total_amount=None):
     status_choices = "b"
 
     if total_amount is None:
-        borrowed_days = (borrowing.expected_return_date - borrowing.borrow_date).days
+        borrowed_days = (borrowing.expected_return_date
+                         - borrowing.borrow_date).days
         total_price = borrowing.book_id.daily_fee * borrowed_days
         total_amount = int(total_price * CURRENCY)
 
         type_choices = "p"
 
     session = stripe.checkout.Session.create(
-        line_items=[{
-            "price_data": {
-                "currency": "usd",
-                "product_data": {
-                    "name": f"Book - {borrowing.book_id.title}",
+        line_items=[
+            {
+                "price_data": {
+                    "currency": "usd",
+                    "product_data": {
+                        "name": f"Book - {borrowing.book_id.title}",
+                    },
+                    "unit_amount": total_amount,
                 },
-                "unit_amount": total_amount,
-            },
-            "quantity": 1,
-        }],
+                "quantity": 1,
+            }
+        ],
         mode="payment",
         success_url=request.build_absolute_uri(
-            reverse(
-                'payment:success', kwargs={'borrowing_id': borrowing_id}
-            )
+            reverse("payment:success", kwargs={"borrowing_id": borrowing_id})
         ),
         cancel_url=request.build_absolute_uri(
-            reverse(
-                'payment:cancel', kwargs={'borrowing_id': borrowing_id}
-            )
+            reverse("payment:cancel", kwargs={"borrowing_id": borrowing_id})
         ),
     )
 
