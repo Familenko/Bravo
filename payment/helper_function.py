@@ -18,10 +18,15 @@ CURRENCY = 100
 def create_checkout_session(request, borrowing_id, total_amount=None):
     borrowing = get_object_or_404(Borrowing, id=borrowing_id)
 
+    type_choices = "f"
+    status_choices = "b"
+
     if total_amount is None:
         borrowed_days = (borrowing.expected_return_date - borrowing.borrow_date).days
         total_price = borrowing.book_id.daily_fee * borrowed_days
         total_amount = int(total_price * CURRENCY)
+
+        type_choices = "p"
 
     session = stripe.checkout.Session.create(
         line_items=[{
@@ -48,8 +53,8 @@ def create_checkout_session(request, borrowing_id, total_amount=None):
     )
 
     payment = Payment.objects.create(
-        status="b",
-        type="p",
+        status=status_choices,
+        type=type_choices,
         session_url=session.url,
         session_id=session.id,
         borrowing=borrowing,

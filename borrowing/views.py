@@ -75,9 +75,6 @@ class BorrowingReturnView(generics.UpdateAPIView):
 
             create_checkout_session(self.request, borrowing.id, fine_amount)
 
-        else:
-            create_checkout_session(self.request, borrowing.id)
-
         borrowing.book_id.inventory += 1
         borrowing.book_id.save()
 
