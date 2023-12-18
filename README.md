@@ -47,8 +47,6 @@ Getting access
 
 • Admin panel /admin/
 
-• Documentation is located at /api/doc/swagger/
-
 • Managing books, payments, borrowing, users
 
 • Filtering books, payments, borrowing, users

@@ -8,7 +8,3 @@ venv/
 **__pycache__/
 *.pyc
 **db.sqlite3
-user/migrations/*.py
-book/migrations/*.py
-borrowing/migrations/*.py
-payment/migrations/*.py
