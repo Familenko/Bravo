@@ -18,24 +18,26 @@ class Borrowing(models.Model):
     is_active = models.BooleanField(default=True)
 
     def clean(self):
-        if self.borrow_date > self.expected_return_date:
-            raise ValidationError(
-                "Expected return date should be after the borrow date."
-            )
+        if self.expected_return_date:
+            if self.borrow_date > self.expected_return_date:
+                raise ValidationError(
+                    "Expected return date should be after the borrow date."
+                )
 
-        if (
-            self.actual_return_date
-            and self.actual_return_date > self.expected_return_date
-        ):
-            raise ValidationError(
-                "Actual return date should not be after the expected return date."
-            )
+            if (
+                self.actual_return_date
+                and self.actual_return_date > self.expected_return_date
+            ):
+                raise ValidationError(
+                    "Actual return date should not be after the expected return date."
+                )
 
     def save(self, *args, **kwargs):
-        if self.actual_return_date and self.actual_return_date < self.borrow_date:
-            raise ValidationError(
-                "Actual return date should not be before the borrow date."
-            )
+        if self.actual_return_date:
+            if self.actual_return_date < self.borrow_date:
+                raise ValidationError(
+                    "Actual return date should not be before the borrow date."
+                )
         super().save(*args, **kwargs)
 
     def __str__(self):

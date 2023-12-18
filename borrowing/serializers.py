@@ -4,8 +4,6 @@ from payment.serializers import PaymentSerializer
 
 
 class BorrowingSerializer(serializers.ModelSerializer):
-    payments = PaymentSerializer(many=True, read_only=True)
-
     class Meta:
         model = Borrowing
         fields = [
@@ -15,7 +13,6 @@ class BorrowingSerializer(serializers.ModelSerializer):
             "actual_return_date",
             "book_id",
             "user_id",
-            "payments",
         ]
 
     def create(self, validated_data):
@@ -31,6 +28,7 @@ class BorrowingSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Book is out of stock.")
 
         borrowing = Borrowing.objects.create(
+            borrow_date=validated_data["borrow_date"],
             expected_return_date=validated_data["expected_return_date"],
             actual_return_date=validated_data["actual_return_date"],
             book_id=book_id,

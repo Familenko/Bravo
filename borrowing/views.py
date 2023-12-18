@@ -81,6 +81,19 @@ class BorrowingReturnView(generics.UpdateAPIView):
         return Response(BorrowingSerializer(borrowing).data, status=status.HTTP_200_OK)
 
 
+# class BorrowingCreateView(generics.CreateAPIView):
+#     queryset = Borrowing.objects.select_related("book_id", "user_id")
+#     serializer_class = BorrowingSerializer
+#     permission_classes = [IsAuthenticated]
+#     http_method_names = ["post"]
+#
+#     def perform_create(self, serializer):
+#         borrowing = serializer.save()
+#
+#         create_checkout_session(self.request, borrowing.id)
+#
+#         return Response(serializer.data)
+
 class BorrowingCreateView(generics.CreateAPIView):
     queryset = Borrowing.objects.select_related("book_id", "user_id")
     serializer_class = BorrowingSerializer
@@ -90,6 +103,9 @@ class BorrowingCreateView(generics.CreateAPIView):
     def perform_create(self, serializer):
         borrowing = serializer.save()
 
-        create_checkout_session(self.request, borrowing.id)
+        # Access the underlying HttpRequest instance from the DRF Request object
+        http_request = self.request._request
+
+        create_checkout_session(http_request, borrowing.id)
 
         return Response(serializer.data)

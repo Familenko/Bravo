@@ -57,7 +57,7 @@ def create_checkout_session(request, borrowing_id, total_amount=None):
         type=type_choices,
         session_url=session.url,
         session_id=session.id,
-        borrowing=borrowing,
+        borrowing_id=borrowing,
     )
 
     return HttpResponseRedirect(session.url, status=303)
