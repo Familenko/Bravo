@@ -23,10 +23,10 @@ urlpatterns = [
     path(
         "<int:pk>/return/",
         BorrowingReturnView.as_view(),
-        name="return_book"
+        name="return-book"
     ),
     path(
-        "",
+        "create/",
         BorrowingCreateView.as_view(),
         name="borrowing-create",
     ),

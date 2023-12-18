@@ -1,10 +1,10 @@
 from django.urls import path
 
-from payment.stripe import create_checkout_session
+from payment.stripe import create_checkout_test_session
 from payment.views import PaymentList, PaymentDetail, SuccessView, CancelView
 
 urlpatterns = [
-    path("stripe/", create_checkout_session, name="stripe"),
+    path("stripe/", create_checkout_test_session, name="stripe"),
     path("list/", PaymentList.as_view(), name="list"),
     path(
         "detail/<int:pk>/",
