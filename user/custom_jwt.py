@@ -7,7 +7,6 @@ class AuthorizeHeaderJWTAuthentication(JWTAuthentication):
         header = request.META.get("HTTP_AUTHORIZE")
 
         if isinstance(header, str):
-            # Work around django test client oddness
             header = header.encode(HTTP_HEADER_ENCODING)
 
         return header
