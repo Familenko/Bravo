@@ -32,13 +32,14 @@ class Borrowing(models.Model):
                     "Actual return date should not be after the expected return date."
                 )
 
-    def save(self, *args, **kwargs):
         if self.actual_return_date:
             if self.actual_return_date < self.borrow_date:
                 raise ValidationError(
                     "Actual return date should not be before the borrow date."
                 )
 
+    def save(self, *args, **kwargs):
+        self.full_clean()
         super().save(*args, **kwargs)
 
     def __str__(self):
