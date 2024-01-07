@@ -97,7 +97,7 @@ class BorrowingReturnView(generics.UpdateAPIView):
 
 
 class BorrowingCreateView(generics.CreateAPIView):
-    queryset = Borrowing.objects.select_related("book_id", "user_id")
+    queryset = Borrowing.objects.all()
     serializer_class = BorrowingSerializer
     permission_classes = [IsAuthenticated]
     http_method_names = ["post"]
